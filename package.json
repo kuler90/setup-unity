@@ -1,0 +1,15 @@
+{
+  "name": "setup-unity",
+  "description": "setup unity action",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuler90/setup-unity.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/exec": "^1.0.4",
+    "@actions/tool-cache": "^1.6.0"
+  },
+  "devDependencies": {}
+}
