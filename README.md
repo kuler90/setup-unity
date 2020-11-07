@@ -6,7 +6,7 @@
 
 GitHub Action to download and install Unity. Based on Unity Hub.
 
-Works on Ubuntu, macOS and Windows.
+Works on Ubuntu, macOS and Windows. [More details](https://github.com/kuler90/setup-unity/actions/runs/349277097)
 
 ## Inputs
 
@@ -71,7 +71,7 @@ Unity executable path. Also setted env `UNITY_PATH`.
 
 ## Known issues
 
- - Installing `android` module with childs modules may freeze on macOS.
+ - Installing `android` module with childs modules may freeze on macOS. Recommended to use with [`timeout-minutes`](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepstimeout-minutes).
  - Workflow may fail with `System.IO.IOException: No space left on device` on GitHub-hosted Ubuntu. Setting `install-path: /mnt` can fix the problem.
 
 ## Example usage
