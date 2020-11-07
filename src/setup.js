@@ -14,7 +14,7 @@ async function run() {
         const projectPath = core.getInput('project-path');
 
         if (!unityVersion) {
-            [unityVersion, unityVersionChangeset] = findProjectVersion(projectPath);
+            [unityVersion, unityVersionChangeset] = await findProjectVersion(projectPath);
         } else if (!unityVersionChangeset) {
             unityVersionChangeset = await findVersionChangeset(unityVersion);
         }
@@ -106,17 +106,24 @@ async function findUnity(unityHubPath, unityVersion) {
     return unityPath;
 }
 
-function findProjectVersion(projectPath) {
+async function findProjectVersion(projectPath) {
     const filePath = path.join(projectPath, 'ProjectSettings/ProjectVersion.txt');
     if (fs.existsSync(filePath)) {
         const fileText = fs.readFileSync(filePath, 'utf8');
-        const match = fileText.match(/m_EditorVersionWithRevision: (.+) \((.+)\)/);
-        const version = match[1];
-        const changeset = match[2];
-        return [version, changeset];
-    } else {
-        throw new Error(`Project not found at path: ${projectPath}`);
+        const match1 = fileText.match(/m_EditorVersionWithRevision: (.+) \((.+)\)/);
+        if (match1) {
+            const version = match1[1];
+            const changeset = match1[2];
+            return [version, changeset];
+        }
+        const match2 = fileText.match(/m_EditorVersion: (.+)/);
+        if (match2) {
+            const version = match2[1];
+            const changeset = await findVersionChangeset(version);
+            return [version, changeset];
+        }
     }
+    throw new Error(`Project not found at path: ${projectPath}`);
 }
 
 async function findVersionChangeset(unityVersion) {
