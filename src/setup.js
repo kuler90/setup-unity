@@ -79,7 +79,11 @@ async function installUnityEditor(unityHubPath, installPath, unityVersion, unity
     let unityPath = await findUnity(unityHubPath, unityVersion);
     if (!unityPath) {
         if (installPath) {
-            await executeHub(unityHubPath, `install-path --set ${installPath}`);
+            if (process.platform === 'linux' || process.platform === 'darwin') {
+                await execute(`sudo mkdir -p "${installPath}"`);
+                await execute(`sudo chmod -R o+rwx "${installPath}"`);
+            }
+            await executeHub(unityHubPath, `install-path --set "${installPath}"`);
         }
         await executeHub(unityHubPath, `install --version ${unityVersion} --changeset ${unityVersionChangeset}`);
         unityPath = await findUnity(unityHubPath, unityVersion);
@@ -152,9 +156,9 @@ async function findVersionChangeset(unityVersion) {
 
 async function executeHub(unityHubPath, args) {
     if (process.platform === 'linux') {
-        return await execute(`sudo xvfb-run --auto-servernum "${unityHubPath}" --no-sandbox --headless ${args}`);
+        return await execute(`xvfb-run --auto-servernum "${unityHubPath}" --no-sandbox --headless ${args}`);
     } else if (process.platform === 'darwin') {
-        return await execute(`sudo "${unityHubPath}" -- --headless ${args}`);
+        return await execute(`"${unityHubPath}" -- --headless ${args}`);
     } else if (process.platform === 'win32') {
         // unityhub always return exit code 1
         return await execute(`"${unityHubPath}" -- --headless ${args}`, true);
