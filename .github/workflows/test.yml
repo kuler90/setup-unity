@@ -2,7 +2,7 @@ name: test
 on:
   push:
     branches:
-      - "master"
+      - "**"
     paths-ignore:
       - "**.md"
 jobs:
@@ -40,7 +40,7 @@ jobs:
       - name: Setup unity
         id: setup-unity
         uses: ./
-        timeout-minutes: 30
+        timeout-minutes: 60
         with:
           unity-version: ${{ matrix.unity-version }}
           unity-modules: ${{ matrix.unity-module }}

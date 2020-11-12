@@ -1,7 +1,7 @@
 # setup-unity
 
 <p align="left">
-  <a href="https://github.com/kuler90/setup-unity/actions"><img alt="GitHub Actions status" src="https://github.com/kuler90/setup-unity/workflows/test/badge.svg"></a>
+  <a href="https://github.com/kuler90/setup-unity/actions"><img alt="GitHub Actions status" src="https://github.com/kuler90/setup-unity/workflows/test/badge.svg?branch=master"></a>
 </p>
 
 GitHub Action to download and install Unity. Based on Unity Hub.
