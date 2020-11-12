@@ -21,6 +21,7 @@ async function run() {
         const unityHubPath = await installUnityHub();
         const unityPath = await installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset);
         await installUnityModules(unityHubPath, unityVersion, unityModules, unityModulesChild);
+        await postInstall();
 
         core.setOutput('unity-version', unityVersion);
         core.setOutput('unity-path', unityPath);
@@ -95,6 +96,13 @@ async function installUnityModules(unityHubPath, unityVersion, unityModules, uni
     const modulesArgs = unityModules.map(s => `--module ${s.toLowerCase()}`).join(' ');
     const childModulesArg = unityModulesChild ? '--childModules' : '';
     await executeHub(unityHubPath, `install-modules --version ${unityVersion} ${modulesArgs} ${childModulesArg}`);
+}
+
+async function postInstall() {
+    if (process.platform === 'darwin') {
+        await execute('sudo mkdir -p "/Library/Application Support/Unity"');
+        await execute(`sudo chown -R ${process.env.USER} "/Library/Application Support/Unity"`);
+    }
 }
 
 async function findUnity(unityHubPath, unityVersion) {
