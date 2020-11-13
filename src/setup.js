@@ -46,7 +46,7 @@ async function installUnityHub() {
             await execute(`touch "${process.env.HOME}/.config/Unity Hub/eulaAccepted"`);
             try {
                 await execute('sudo apt-get update');
-                await execute('sudo apt-get install -y libgconf-2-4 libasound2 libgtk2.0-0 libgtk-3-0 libnss3 zenity xvfb');
+                await execute('sudo apt-get install -y libgconf-2-4 libglu1 libasound2 libgtk2.0-0 libgtk-3-0 libnss3 zenity xvfb');
             } catch {
                 // skip 'command not found' error
             }
