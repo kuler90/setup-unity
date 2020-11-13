@@ -1,4 +1,4 @@
-name: test
+name: test ubuntu
 on:
   push:
     branches:
@@ -12,27 +12,23 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-18.04
+          - ubuntu-20.04
         unity-version:
           - 2018.4.1f1
           - 2019.4.1f1
           - 2020.1.0f1
           - 2020.2.0b10
-          - 2021.1.0a4
         unity-module:
           - android
           - ios
-          - appletv
-          - mac-il2cpp
-          - windows
-          - windows-mono
           - webgl
-          - facebook-games
+          - linux-il2cpp
+          - mac-mono
+          - windows-mono
         exclude:
-          - os: macos-latest
-            unity-module: android
+          - unity-version: 2018.4.1f1
+            unity-module: linux-il2cpp
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

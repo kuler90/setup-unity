@@ -1,0 +1,51 @@
+name: test macos
+on:
+  push:
+    branches:
+      - "**"
+    paths-ignore:
+      - "**.md"
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-10.15
+          - macos-11.0
+        unity-version:
+          - 2018.4.1f1
+          - 2019.4.1f1
+          - 2020.1.0f1
+          - 2020.2.0b10
+        unity-module:
+          # - android # may freeze on macOS
+          - ios
+          - appletv
+          - webgl
+          - linux-mono
+          - mac-il2cpp
+          - windows-mono
+        exclude:
+          - unity-version: 2018.4.1f1
+            unity-module: linux-mono
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Check free space
+        run: df -h
+      - name: Setup unity
+        id: setup-unity
+        uses: ./
+        timeout-minutes: 60
+        with:
+          unity-version: ${{ matrix.unity-version }}
+          unity-modules: ${{ matrix.unity-module }}
+      - name: Check free space
+        run: df -h
+      - name: Print output
+        run: |
+          echo unity-version: ${{ steps.setup-unity.outputs.unity-version }}
+          echo unity-path: ${{ steps.setup-unity.outputs.unity-path }}
+          echo env UNITY_PATH: ${{ env.UNITY_PATH }}

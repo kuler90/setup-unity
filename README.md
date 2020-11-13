@@ -1,12 +1,14 @@
 # setup-unity
 
 <p align="left">
-  <a href="https://github.com/kuler90/setup-unity/actions"><img alt="GitHub Actions status" src="https://github.com/kuler90/setup-unity/workflows/test/badge.svg?branch=master"></a>
+  <a href="https://github.com/kuler90/setup-unity/actions"><img alt="GitHub Actions status" src="https://github.com/kuler90/setup-unity/workflows/test%20ubuntu/badge.svg?branch=master"></a>
+  <a href="https://github.com/kuler90/setup-unity/actions"><img alt="GitHub Actions status" src="https://github.com/kuler90/setup-unity/workflows/test%20macos/badge.svg?branch=master"></a>
+  <a href="https://github.com/kuler90/setup-unity/actions"><img alt="GitHub Actions status" src="https://github.com/kuler90/setup-unity/workflows/test%20windows/badge.svg?branch=master"></a>
 </p>
 
 GitHub Action to download and install Unity. Based on Unity Hub.
 
-Works on Ubuntu, macOS and Windows. [More details](https://github.com/kuler90/setup-unity/actions/runs/349277097)
+Works on Ubuntu, macOS and Windows.
 
 ## Inputs
 
@@ -22,30 +24,9 @@ Unity version changeset. For example, `50fe8a171dd9`. Automatically parsed from 
 
 List of Unity modules (e.g. build support) to install. For example, `[ios, android, webgl]`.
 
-Available modules:
+Available modules can be found in test workflows ([test-ubuntu](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-ubuntu.yml), [test-macos](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-macos.yml), [test-windows](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-windows.yml)). 
 
-    Documentation: documentation
-    Standard Assets: standardassets
-    Example Project: example
-    Android Build Support: android
-    iOS Build Support: ios
-    tvOS Build Support: appletv
-    Linux Build Support: linux-mono
-    SamsungTV Build Support: samsung
-    Tizen Build Support: tizen
-    WebGL Build Support: webgl
-    Windows Build Support: windows
-    Facebook Gameroom Build Support: facebook-games
-    MonoDevelop / Unity Debugger: monodevelop
-    Vuforia Augmented Reality Support: vuforia-ar
-    Language packs: language-ja, language-ko, language-zh-cn, language-zh-hant, language-zh-hans
-    Mac Build Support (IL2CPP): mac-il2cpp
-    Windows Build Support (Mono): windows-mono
-    Android SDK & NDK Tools: android-sdk-ndk-tools
-    OpenJDK: android-open-jdk
-    Lumin OS (Magic Leap) Build Support: lumin
-
-Also list of available modules can be checked by execute: `<path-to-unity-hub> -- --headless help`.
+Also list of available modules can be found by execute `<unity-hub> -- --headless help` but result may contains wrong names.
 
 ### `unity-modules-child`
 
