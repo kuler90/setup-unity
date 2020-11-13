@@ -88,6 +88,9 @@ async function installUnityEditor(unityHubPath, installPath, unityVersion, unity
         }
         await executeHub(unityHubPath, `install --version ${unityVersion} --changeset ${unityVersionChangeset}`);
         unityPath = await findUnity(unityHubPath, unityVersion);
+        if (!unityPath) {
+            throw new Error('unity editor installation failed');
+        }
     }
     return unityPath;
 }
@@ -95,7 +98,10 @@ async function installUnityEditor(unityHubPath, installPath, unityVersion, unity
 async function installUnityModules(unityHubPath, unityVersion, unityModules, unityModulesChild) {
     const modulesArgs = unityModules.map(s => `--module ${s.toLowerCase()}`).join(' ');
     const childModulesArg = unityModulesChild ? '--childModules' : '';
-    await executeHub(unityHubPath, `install-modules --version ${unityVersion} ${modulesArgs} ${childModulesArg}`);
+    const stdout = await executeHub(unityHubPath, `install-modules --version ${unityVersion} ${modulesArgs} ${childModulesArg}`);
+    if (!stdout.includes('successfully')) {
+        throw new Error('unity modules installation failed');
+    }
 }
 
 async function postInstall() {
