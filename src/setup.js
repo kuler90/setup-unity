@@ -20,7 +20,9 @@ async function run() {
         }
         const unityHubPath = await installUnityHub();
         const unityPath = await installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset);
-        await installUnityModules(unityHubPath, unityVersion, unityModules, unityModulesChild);
+        if (unityModules.length > 0) {
+            await installUnityModules(unityHubPath, unityVersion, unityModules, unityModulesChild);
+        }
         await postInstall();
 
         core.setOutput('unity-version', unityVersion);
