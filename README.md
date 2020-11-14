@@ -24,7 +24,7 @@ Unity version changeset. For example, `50fe8a171dd9`. Automatically parsed from 
 
 List of Unity modules (e.g. build support) to install. For example, `[ios, android, webgl]`.
 
-Available modules can be found in test workflows ([test-ubuntu](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-ubuntu.yml), [test-macos](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-macos.yml), [test-windows](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-windows.yml)). 
+Available modules can be found in the test workflows ([test-ubuntu](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-ubuntu.yml), [test-macos](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-macos.yml), [test-windows](https://github.com/kuler90/setup-unity/blob/master/.github/workflows/test-windows.yml)). 
 
 Also list of available modules can be found by execute `<unity-hub> -- --headless help` but result may contains wrong names.
 
@@ -71,7 +71,7 @@ Unity executable path. Also setted env `UNITY_PATH`.
   with:
     unity-username: ${{ secrets.UNITY_USERNAME }}
     unity-password: ${{ secrets.UNITY_PASSWORD }}
-    unity-serial: ${{ secrets.UNITY_SERIAL }}
+    unity-authenticator-key: ${{ secrets.UNITY_AUTHENTICATOR_KEY }}
 
 - name: Build Unity
   uses: kuler90/build-unity@v1
