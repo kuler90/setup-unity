@@ -1,5 +1,5 @@
 name: Setup Unity
-description: Download and install Unity. Based on Unity Hub
+description: Download and install Unity on Ubuntu, macOS or Windows. Based on Unity Hub
 inputs:
   unity-version:
     description: Unity version to install. For example, 2019.4.9f1. Project version will be used if not provided
