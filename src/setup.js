@@ -101,7 +101,7 @@ async function installUnityModules(unityHubPath, unityVersion, unityModules, uni
     const modulesArgs = unityModules.map(s => `--module ${s.toLowerCase()}`).join(' ');
     const childModulesArg = unityModulesChild ? '--childModules' : '';
     const stdout = await executeHub(unityHubPath, `install-modules --version ${unityVersion} ${modulesArgs} ${childModulesArg}`);
-    if (!stdout.includes('successfully')) {
+    if (!stdout.includes('successfully') && !stdout.includes("it's already installed")) {
         throw new Error('unity modules installation failed');
     }
 }
