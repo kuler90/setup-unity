@@ -115,7 +115,8 @@ async function postInstall() {
 
 async function findUnity(unityHubPath, unityVersion) {
     let unityPath = '';
-    const output = await executeHub(unityHubPath, `editors --installed`);
+    let output = await executeHub(unityHubPath, `editors --installed`);
+    output = output.replace("(Intel)", "");
     const match = output.match(new RegExp(`${unityVersion} , installed at (.+)`));
     if (match) {
         unityPath = match[1];
