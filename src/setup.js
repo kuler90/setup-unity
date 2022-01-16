@@ -189,7 +189,7 @@ async function execute(command, ignoreReturnCode) {
             stdout: buffer => stdout += buffer.toString()
         }
     });
-    console.log(); // new line
+    console.log(stdout);
     return stdout;
 }
 
