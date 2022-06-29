@@ -1,5 +1,6 @@
 name: test windows
 on:
+  workflow_dispatch:
   push:
     branches:
       - "**"
