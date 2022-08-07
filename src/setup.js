@@ -12,7 +12,7 @@ async function run() {
         const unityModulesChild = getInputAsBool('unity-modules-child');
         const installPath = core.getInput('install-path');
         const projectPath = core.getInput('project-path');
-        const self_runner = core.getInput('self_runner');
+        let self_runner = core.getInput('self_runner');
 
         if(!self_runner) {
             self_runner = false
