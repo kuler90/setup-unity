@@ -121,7 +121,7 @@ async function findUnity(unityHubPath, unityVersion) {
         unityPath = match[1];
     }
     //2021.3.7f1 (Intel), installed at /Applications/Unity/Hub/Editor/2021.3.7f1/Unity.app
-    const match_intel = output.match(new RegExp(`${unityVersion} (Intel), installed at (.+)`));
+    const match_intel = output.match(new RegExp(`${unityVersion} \(Intel\), installed at (.+)`));
     if (match_intel) {
         unityPath = match_intel[1];
     }
