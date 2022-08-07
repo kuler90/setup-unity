@@ -119,9 +119,18 @@ async function findUnity(unityHubPath, unityVersion) {
     const match = output.match(new RegExp(`${unityVersion} , installed at (.+)`));
     if (match) {
         unityPath = match[1];
-        if (unityPath && process.platform === 'darwin') {
-            unityPath += '/Contents/MacOS/Unity';
-        }
+    }
+    const match_intel = output.match(new RegExp(`${unityVersion} (Intel), installed at (.+)`));
+    if (match_intel) {
+        unityPath = match_intel[1];
+    }
+    /*const match_macos_intel = output.match(new RegExp(`${unityVersion} (Silicon), installed at (.+)`));
+    if (match_macos_intel) {
+        unityPath = match_macos_intel[1];
+    }*/
+
+    if (unityPath && process.platform === 'darwin') {
+        unityPath += '/Contents/MacOS/Unity';
     }
     return unityPath;
 }
