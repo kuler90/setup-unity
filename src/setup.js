@@ -83,7 +83,7 @@ async function installUnityHub() {
     return unityHubPath;
 }
 
-async function installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset,githubMachine) {
+async function installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset,self_runner) {
     let unityPath = await findUnity(unityHubPath, unityVersion);
     if (!unityPath) {
         if (installPath) {
