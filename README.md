@@ -48,7 +48,7 @@ Unity version.
 
 ### `unity-path`
 
-Unity executable path. Also setted env `UNITY_PATH`.
+Unity executable path. Also set as an environment variable `UNITY_PATH`.
 
 ## Known issues
 
