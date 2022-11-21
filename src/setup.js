@@ -12,23 +12,19 @@ async function run() {
         const unityModulesChild = getInputAsBool('unity-modules-child');
         const installPath = core.getInput('install-path');
         const projectPath = core.getInput('project-path');
-        let self_runner = core.getInput('self_runner');
-
-        if(!self_runner) {
-            self_runner = false
-        }
+        const selfHosted = getInputAsBool('self-hosted');
 
         if (!unityVersion) {
             [unityVersion, unityVersionChangeset] = await findProjectVersion(projectPath);
         } else if (!unityVersionChangeset) {
             unityVersionChangeset = await findVersionChangeset(unityVersion);
         }
-        const unityHubPath = await installUnityHub();
-        const unityPath = await installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset,self_runner);
+        const unityHubPath = await installUnityHub(selfHosted);
+        const unityPath = await installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset, selfHosted);
         if (unityModules.length > 0) {
             await installUnityModules(unityHubPath, unityVersion, unityModules, unityModulesChild);
         }
-        await postInstall(self_runner);
+        await postInstall(selfHosted);
 
         core.setOutput('unity-version', unityVersion);
         core.setOutput('unity-path', unityPath);
@@ -38,7 +34,7 @@ async function run() {
     }
 }
 
-async function installUnityHub() {
+async function installUnityHub(selfHosted) {
     let unityHubPath = '';
     if (process.platform === 'linux') {
 
@@ -50,8 +46,8 @@ async function installUnityHub() {
             await execute(`chmod +x "${unityHubPath}"`);
             await execute(`touch "${process.env.HOME}/.config/Unity Hub/eulaAccepted"`);
             try {
-                await execute('sudo apt-get update');
-                await execute('sudo apt-get install -y libgconf-2-4 libglu1 libasound2 libgtk2.0-0 libgtk-3-0 libnss3 zenity xvfb');
+                await execute('apt-get update', { sudo: !selfHosted });
+                await execute('apt-get install -y libgconf-2-4 libglu1 libasound2 libgtk2.0-0 libgtk-3-0 libnss3 zenity xvfb', { sudo: !selfHosted });
             } catch {
                 // skip 'command not found' error
             }
@@ -62,10 +58,10 @@ async function installUnityHub() {
         unityHubPath = '/Applications/Unity Hub.app/Contents/MacOS/Unity Hub';
         if (!fs.existsSync(unityHubPath)) {
             const installerPath = await tc.downloadTool('https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.dmg');
-            await execute(`sudo hdiutil mount "${installerPath}"`);
+            await execute(`hdiutil mount "${installerPath}"`, { sudo: !selfHosted });
             const hubVolume = (await execute('ls /Volumes')).match(/Unity Hub.*/)[0];
             await execute(`ditto "/Volumes/${hubVolume}/Unity Hub.app" "/Applications/Unity Hub.app"`);
-            await execute(`sudo hdiutil detach "/Volumes/${hubVolume}"`);
+            await execute(`hdiutil detach "/Volumes/${hubVolume}"`, { sudo: !selfHosted });
             await execute(`rm "${installerPath}"`);
         }
 
@@ -83,13 +79,13 @@ async function installUnityHub() {
     return unityHubPath;
 }
 
-async function installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset,self_runner) {
+async function installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset, selfHosted) {
     let unityPath = await findUnity(unityHubPath, unityVersion);
     if (!unityPath) {
         if (installPath) {
-            if ((process.platform === 'linux' || process.platform === 'darwin') && !self_runner) {
-                await execute(`sudo mkdir -p "${installPath}"`);
-                await execute(`sudo chmod -R o+rwx "${installPath}"`);
+            if (process.platform === 'linux' || process.platform === 'darwin') {
+                await execute(`mkdir -p "${installPath}"`, { sudo: !selfHosted });
+                await execute(`chmod -R o+rwx "${installPath}"`, { sudo: !selfHosted });
             }
             await executeHub(unityHubPath, `install-path --set "${installPath}"`);
         }
@@ -111,10 +107,10 @@ async function installUnityModules(unityHubPath, unityVersion, unityModules, uni
     }
 }
 
-async function postInstall(self_runner) {
-    if (process.platform === 'darwin' && !self_runner) {
-        await execute('sudo mkdir -p "/Library/Application Support/Unity"');
-        await execute(`sudo chown -R ${process.env.USER} "/Library/Application Support/Unity"`);
+async function postInstall(selfHosted) {
+    if (process.platform === 'darwin') {
+        await execute('mkdir -p "/Library/Application Support/Unity"', { sudo: !selfHosted });
+        await execute(`chown -R ${process.env.USER} "/Library/Application Support/Unity"`, { sudo: !selfHosted });
     }
 }
 
@@ -177,19 +173,20 @@ async function findVersionChangeset(unityVersion) {
 
 async function executeHub(unityHubPath, args) {
     if (process.platform === 'linux') {
-        return await execute(`xvfb-run --auto-servernum "${unityHubPath}" --headless ${args}`, true);
+        return await execute(`xvfb-run --auto-servernum "${unityHubPath}" --headless ${args}`, { ignoreReturnCode: true });
     } else if (process.platform === 'darwin') {
-        return await execute(`"${unityHubPath}" -- --headless ${args}`, true);
+        return await execute(`"${unityHubPath}" -- --headless ${args}`, { ignoreReturnCode: true });
     } else if (process.platform === 'win32') {
         // unityhub always return exit code 1
-        return await execute(`"${unityHubPath}" -- --headless ${args}`, true);
+        return await execute(`"${unityHubPath}" -- --headless ${args}`, { ignoreReturnCode: true });
     }
 }
 
-async function execute(command, ignoreReturnCode) {
+async function execute(command, options) {
     let stdout = '';
-    await exec.exec(command, [], {
-        ignoreReturnCode: ignoreReturnCode,
+    const prefix = options.sudo == true ? 'sudo ' : '';
+    await exec.exec(prefix + command, [], {
+        ignoreReturnCode: options.ignoreReturnCode,
         listeners: {
             stdout: buffer => stdout += buffer.toString()
         }

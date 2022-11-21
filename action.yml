@@ -46,9 +46,10 @@ inputs:
   install-path:
     description: Path where the Unity editor will be installed
     required: false
-  self_runner:
+  self-hosted:
     description: If true, avoid to invoke commands with sudo
     required: false
+    default: false
 outputs:
   unity-version:
     description: Unity version
