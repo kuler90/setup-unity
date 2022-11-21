@@ -12,6 +12,11 @@ async function run() {
         const unityModulesChild = getInputAsBool('unity-modules-child');
         const installPath = core.getInput('install-path');
         const projectPath = core.getInput('project-path');
+        let self_runner = core.getInput('self_runner');
+
+        if(!self_runner) {
+            self_runner = false
+        }
 
         if (!unityVersion) {
             [unityVersion, unityVersionChangeset] = await findProjectVersion(projectPath);
@@ -19,11 +24,11 @@ async function run() {
             unityVersionChangeset = await findVersionChangeset(unityVersion);
         }
         const unityHubPath = await installUnityHub();
-        const unityPath = await installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset);
+        const unityPath = await installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset,self_runner);
         if (unityModules.length > 0) {
             await installUnityModules(unityHubPath, unityVersion, unityModules, unityModulesChild);
         }
-        await postInstall();
+        await postInstall(self_runner);
 
         core.setOutput('unity-version', unityVersion);
         core.setOutput('unity-path', unityPath);
@@ -78,11 +83,11 @@ async function installUnityHub() {
     return unityHubPath;
 }
 
-async function installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset) {
+async function installUnityEditor(unityHubPath, installPath, unityVersion, unityVersionChangeset,self_runner) {
     let unityPath = await findUnity(unityHubPath, unityVersion);
     if (!unityPath) {
         if (installPath) {
-            if (process.platform === 'linux' || process.platform === 'darwin') {
+            if ((process.platform === 'linux' || process.platform === 'darwin') && !self_runner) {
                 await execute(`sudo mkdir -p "${installPath}"`);
                 await execute(`sudo chmod -R o+rwx "${installPath}"`);
             }
@@ -106,8 +111,8 @@ async function installUnityModules(unityHubPath, unityVersion, unityModules, uni
     }
 }
 
-async function postInstall() {
-    if (process.platform === 'darwin') {
+async function postInstall(self_runner) {
+    if (process.platform === 'darwin' && !self_runner) {
         await execute('sudo mkdir -p "/Library/Application Support/Unity"');
         await execute(`sudo chown -R ${process.env.USER} "/Library/Application Support/Unity"`);
     }
@@ -116,7 +121,7 @@ async function postInstall() {
 async function findUnity(unityHubPath, unityVersion) {
     let unityPath = '';
     const output = await executeHub(unityHubPath, `editors --installed`);
-    const match = output.match(new RegExp(`${unityVersion} , installed at (.+)`));
+    const match = output.match(new RegExp(`${unityVersion}.+, installed at (.+)`));
     if (match) {
         unityPath = match[1];
         if (unityPath && process.platform === 'darwin') {
