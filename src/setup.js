@@ -184,9 +184,9 @@ async function executeHub(unityHubPath, args) {
 
 async function execute(command, options) {
     let stdout = '';
-    const prefix = options.sudo == true ? 'sudo ' : '';
+    const prefix = options?.sudo == true ? 'sudo ' : '';
     await exec.exec(prefix + command, [], {
-        ignoreReturnCode: options.ignoreReturnCode,
+        ignoreReturnCode: options?.ignoreReturnCode,
         listeners: {
             stdout: buffer => stdout += buffer.toString()
         }
